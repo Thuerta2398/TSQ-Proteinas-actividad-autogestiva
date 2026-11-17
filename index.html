@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proteínas: las piezas que trabajan</title>
+<meta name="description" content="Interactivo de apoyo · Temas Selectos de Química · Unidad III · 3.4 Proteínas: aminoácidos, enlace peptídico, clasificación, función y metabolismo.">
+<style>
+:root{
+  --azul-oscuro:#0d3b66; --azul-medio:#1b6fb2; --azul-claro:#78b4dc; --azul-fondo:#ebf4fa;
+  --gris:#282828; --rojo:#c62828; --verde:#2e7d32; --blanco:#ffffff; --borde:#c9dcea;
+  --bg:#f7fbfe; --card:#ffffff; --texto:#282828; --suave:#5a6b7a; --titulo:#1b6fb2;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1a26; --card:#152536; --texto:#e8eef4; --suave:#a9bccc; --azul-fondo:#1c3247; --borde:#2b4660; --titulo:#78b4dc;
+  }
+}
+:root[data-theme="dark"]{ --bg:#0e1a26; --card:#152536; --texto:#e8eef4; --suave:#a9bccc; --azul-fondo:#1c3247; --borde:#2b4660; --titulo:#78b4dc; }
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--texto);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:17px;line-height:1.5}
+header{background:var(--azul-oscuro);color:#fff;padding:14px 96px 10px 16px}
+header .curso{font-size:.85rem;opacity:.85}
+header h1{margin:2px 0 0;font-size:1.35rem}
+.franja{height:5px;background:linear-gradient(90deg,var(--azul-medio) 0 70%,var(--azul-claro) 70% 100%)}
+.barra{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--borde);padding:8px 16px}
+.barra .pista{height:10px;background:var(--azul-fondo);border-radius:6px;overflow:hidden}
+.barra .relleno{height:100%;width:0;background:var(--azul-medio);transition:width .4s}
+.barra .txt{font-size:.8rem;color:var(--suave);margin-top:3px;display:flex;justify-content:space-between}
+main{max-width:860px;margin:0 auto;padding:16px}
+.estacion{display:none;background:var(--card);border:1px solid var(--borde);border-radius:14px;padding:18px 16px;animation:entra .35s ease}
+.estacion.activa{display:block}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h2{color:var(--titulo);margin:0 0 4px;font-size:1.25rem}
+.chip{text-align:left}
+.etiqueta-est{font-size:.8rem;font-weight:700;color:var(--azul-claro);letter-spacing:.04em;text-transform:uppercase}
+.caja{background:var(--azul-fondo);border-left:5px solid var(--azul-medio);border-radius:8px;padding:10px 12px;margin:10px 0}
+.caja.alerta{border-left-color:var(--rojo)}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border-radius:10px;border:2px solid var(--azul-medio);background:var(--card);color:var(--texto);padding:8px 14px}
+button.prim{background:var(--azul-medio);color:#fff}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--azul-claro);outline-offset:2px}
+input,select,textarea{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--borde);background:var(--card);color:var(--texto);width:100%}
+label{font-weight:600;display:block;margin:10px 0 4px}
+.grid{display:grid;gap:10px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+@media (max-width:640px){.g3{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}}
+/* tarjetas que voltean */
+.flip{perspective:800px;height:130px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .cara{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px;border:2px solid var(--azul-medio)}
+.flip .frente{background:var(--azul-fondo);font-weight:700;font-size:.92rem;overflow-wrap:anywhere}
+.flip .frente .ico{font-size:1.8rem}
+.flip .reverso{background:var(--azul-medio);color:#fff;transform:rotateY(180deg);font-size:.88rem}
+/* opciones */
+.opciones{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{border-radius:20px;padding:6px 12px;border:2px solid var(--borde)}
+.chip.sel{border-color:var(--azul-medio);background:var(--azul-fondo)}
+.chip.ok{border-color:var(--verde);background:#e3f3e5;color:#1b4d1f}
+.chip.mal{border-color:var(--rojo);background:#fbe4e4;color:#7a1b1b}
+.fila{border:1px solid var(--borde);border-radius:10px;padding:10px;margin:8px 0}
+.fila.ok{border-color:var(--verde);box-shadow:inset 4px 0 0 var(--verde)}
+.fila.mal{border-color:var(--rojo);box-shadow:inset 4px 0 0 var(--rojo)}
+.fb{font-size:.92rem;margin-top:6px;min-height:1.2em}
+.fb.ok{color:var(--verde)} .fb.mal{color:var(--rojo)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip.ok{color:#1b4d1f}:root:not([data-theme="light"]) .chip.mal{color:#7a1b1b}}
+/* orden */
+.orden-lista{list-style:none;padding:0;margin:8px 0}
+.orden-lista li{display:flex;align-items:center;gap:8px;border:1px solid var(--borde);border-radius:10px;padding:8px;margin:6px 0;background:var(--card)}
+.orden-lista li .num{background:var(--azul-medio);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700;flex:0 0 28px}
+.orden-lista li .t{flex:1}
+.orden-lista li button{padding:2px 9px}
+/* comprobante */
+canvas{max-width:100%;border:1px solid var(--borde);border-radius:8px;background:#fff}
+.peq{font-size:.85rem;color:var(--suave)}
+footer{max-width:860px;margin:0 auto;padding:4px 16px 24px;font-size:.78rem;color:var(--suave)}
+.tema{position:absolute;right:12px;top:12px;background:transparent;color:#fff;border-color:rgba(255,255,255,.6);padding:4px 10px;font-size:.8rem}
+header{position:relative}
+/* --- S14 --- */
+#svgAA .mol{max-width:420px}
+.mol{width:100%;max-width:640px;height:auto;display:block;margin:6px auto;background:var(--card);border:1px solid var(--borde);border-radius:12px}
+.mol text{font-family:system-ui,Arial,sans-serif;font-size:22px;fill:var(--texto);text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:var(--card);stroke-width:9px;stroke-linejoin:round}
+.mol line{stroke:var(--texto);stroke-width:2.4}
+.mol .rojo{fill:var(--rojo);font-weight:700}
+.mol .azul{fill:var(--azul-medio);font-weight:700}
+.mol .peq{font-size:15px}
+.mol .lbl{font-size:14px;font-weight:700}
+.mol .badge circle{fill:var(--azul-oscuro)}
+.mol .badge text{fill:#fff;stroke:none;font-size:15px;font-weight:700}
+.mol .bondpep{stroke:var(--azul-medio);stroke-width:6}
+.mol .agua{animation:sale 1.4s ease forwards}
+@keyframes sale{from{transform:translate(0,-60px);opacity:.2}to{transform:none;opacity:1}}
+.niveles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.niveles div{border:2px solid var(--borde);border-radius:10px;padding:8px;text-align:center;font-size:.85rem;background:var(--azul-fondo)}
+.niveles div b{display:block;color:var(--titulo)}
+.niveles .ico{font-size:1.6rem;display:block}
+@media (max-width:640px){.niveles{grid-template-columns:repeat(2,1fr)}}
+.sarten{display:flex;align-items:center;justify-content:center;gap:16px;margin:10px 0}
+.huevo{width:120px;height:86px;border-radius:50%;position:relative;border:2px dashed #9aa9b6;background:rgba(235,244,250,.35);transition:all 1.6s}
+.huevo::after{content:"";position:absolute;width:38px;height:38px;border-radius:50%;background:#f4b400;left:41px;top:24px}
+.huevo.cocido{background:#fff;border:2px solid #555}
+</style>
+</head>
+<body>
+<header>
+  <div class="curso">Temas Selectos de Química · Unidad III · 3.4 Proteínas</div>
+  <h1>Proteínas: las piezas que trabajan</h1>
+  <button class="tema" id="btnTema" aria-label="Cambiar tema claro u oscuro">◐ Tema</button>
+</header>
+<div class="franja"></div>
+<div class="barra">
+  <div class="pista"><div class="relleno" id="relleno"></div></div>
+  <div class="txt"><span id="txtEst">Inicio</span><span id="txtPct">0 %</span></div>
+</div>
+
+<main>
+
+<!-- 0 REGISTRO -->
+<section class="estacion" data-n="0">
+  <div class="etiqueta-est">Inicio</div>
+  <h2>El reto de Mateo</h2>
+  <p>Mateo, de 16 años, quiere tomar <b>tres batidos de proteína al día</b> para ganar músculo. Su abuela le dice: <b>«Con huevo, frijolitos y tortilla tienes de sobra»</b>. Y en el sartén, la clara del huevo pasó de transparente a blanca… y no regresa.</p>
+  <p>En 8 estaciones vas a reunir la química que necesitas para responderle. Al final descargas tu <b>comprobante</b> (PNG o PDF) y lo subes a Blackboard.</p>
+  <div class="caja">Puedes repetir cada actividad las veces que quieras: aquí se aprende equivocándose. Tu avance se guarda en este navegador.</div>
+  <label for="nombre">Nombre completo</label>
+  <input id="nombre" autocomplete="name" placeholder="Nombre y apellidos">
+  <label for="grupo">Grupo</label>
+  <input id="grupo" placeholder="Ej.: 500B">
+  <p class="fb mal" id="fbReg"></p>
+  <div class="nav"><span></span><button class="prim" id="btnIniciar">Comenzar →</button></div>
+</section>
+
+<!-- 1 AMINOACIDO -->
+<section class="estacion" data-n="1">
+  <div class="etiqueta-est">Estación 1 · 3.4.1 Estructura de los aminoácidos</div>
+  <h2>Anatomía de un aminoácido</h2>
+  <p>Todos los aminoácidos comparten la misma «base» unida a un <b>carbono central (α)</b>; solo cambia la <b>cadena lateral R</b>. Observa las partes numeradas.</p>
+  <div id="svgAA"></div>
+  <h3>Reto A: nombra cada parte</h3>
+  <div id="retoAA"></div>
+  <button class="prim" id="chkAA">Revisar</button>
+  <p class="fb" id="fbAA"></p>
+  <h3>Reto B: analiza dos aminoácidos</h3>
+  <div class="grid g2">
+    <div><div id="svgGly"></div><p class="peq" style="text-align:center">Glicina</p></div>
+    <div><div id="svgVal"></div><p class="peq" style="text-align:center">Valina</p></div>
+  </div>
+  <div class="caja"><b>Método de 3 preguntas:</b> ¿dónde está el grupo amino? ¿dónde está el carboxilo? ¿cuál es la cadena R?</div>
+  <div id="retoGV"></div>
+  <button class="prim" id="chkGV">Revisar</button>
+  <p class="fb" id="fbGV"></p>
+  <div class="nav"><button data-ir="-1">← Atrás</button><button class="prim" data-ir="1">Siguiente →</button></div>
+</section>
+
+<!-- 2 ENLACE PEPTIDICO -->
+<section class="estacion" data-n="2">
+  <div class="etiqueta-est">Estación 2 · 3.4.1 Enlace peptídico</div>
+  <h2>Construye un dipéptido</h2>
+  <p>Une una glicina y una valina, paso a paso.</p>
+  <div id="svgPep"></div>
+  <p id="txtPep" class="caja">Paso 1: tenemos dos piezas. Pulsa «Siguiente paso».</p>
+  <button id="btnPep">Siguiente paso ▶</button>
+  <h3>Reto: completa la descripción</h3>
+  <p>Se une el grupo
+    <select id="p1" aria-label="Grupo de la glicina"><option value="">elige…</option><option value="a">amino</option><option value="b">carboxilo</option><option value="c">R</option></select>
+    de la glicina con el grupo
+    <select id="p2" aria-label="Grupo de la valina"><option value="">elige…</option><option value="a">amino</option><option value="b">carboxilo</option><option value="c">R</option></select>
+    de la valina; sale una molécula de
+    <select id="p3" aria-label="Molécula que sale"><option value="">elige…</option><option value="a">CO₂</option><option value="b">agua (H₂O)</option><option value="c">oxígeno (O₂)</option></select>
+    y queda un enlace entre los átomos
+    <select id="p4" aria-label="Átomos del enlace"><option value="">elige…</option><option value="a">C y N</option><option value="b">C y O</option><option value="c">N y H</option></select>,
+    llamado enlace
+    <select id="p5" aria-label="Nombre del enlace"><option value="">elige…</option><option value="a">éster</option><option value="b">glucosídico</option><option value="c">peptídico</option></select>.</p>
+  <button class="prim" id="chkPep">Revisar</button>
+  <p class="fb" id="fbPep"></p>
+  <label for="explica">Explícalo con tus propias palabras (2 a 3 líneas): ¿cómo se forma el enlace peptídico?</label>
+  <textarea id="explica" rows="3" placeholder="Cuando dos aminoácidos se unen..."></textarea>
+  <p class="peq" id="cuentaExp">0 palabras (mínimo sugerido: 20)</p>
+  <div class="caja">Es el <b>mismo truco</b> que en carbohidratos (enlace glucosídico) y lípidos (enlace éster): unir piezas <b>soltando</b> agua (condensación) y separarlas <b>metiendo</b> agua (hidrólisis).</div>
+  <div class="nav"><button data-ir="-1">← Atrás</button><button class="prim" data-ir="1">Siguiente →</button></div>
+</section>
+
+<!-- 3 NIVELES -->
+<section class="estacion" data-n="3">
+  <div class="etiqueta-est">Estación 3 · Estructura de las proteínas</div>
+  <h2>Del collar al ovillo: los cuatro niveles</h2>
+  <div class="niveles">
+    <div><span class="ico">📿</span><b>Collar de cuentas</b>orden de las piezas</div>
+    <div><span class="ico">🌀</span><b>Cable enrollado</b>hélice o lámina</div>
+    <div><span class="ico">🧶</span><b>Ovillo</b>forma 3D completa</div>
+    <div><span class="ico">🤝</span><b>Equipo</b>varias cadenas juntas</div>
+  </div>
+  <p>Ordena los niveles de estructura del más simple al más complejo. Usa ▲ ▼ para mover.</p>
+  <ul class="orden-lista" id="ordenNiv"></ul>
+  <button class="prim" id="chkNiv">Revisar orden</button>
+  <p class="fb" id="fbNiv"></p>
+  <div class="caja"><b>Idea clave:</b> el <b>orden</b> de los aminoácidos decide cómo se dobla la cadena, y la <b>forma</b> final decide qué trabajo hace la proteína.</div>
+  <div class="nav"><button data-ir="-1">← Atrás</button><button class="prim" data-ir="1">Siguiente →</button></div>
+</section>
+
+<!-- 4 DESNATURALIZACION -->
+<section class="estacion" data-n="4">
+  <div class="etiqueta-est">Estación 4 · Desnaturalización</div>
+  <h2>Laboratorio del huevo</h2>
+  <div class="sarten"><div class="huevo" id="huevo" aria-label="Huevo en el sartén"></div><button id="btnHuevo">🔥 Calentar</button></div>
+  <p id="txtHuevo" class="caja">La clara es casi toda <b>albúmina</b>, una proteína globular. Pulsa «Calentar».</p>
+  <h3>Reto: ¿esto desnaturaliza una proteína?</h3>
+  <div id="retoDes"></div>
+  <button class="prim" id="chkDes">Revisar</button>
+  <p class="fb" id="fbDes"></p>
+  <div class="nav"><button data-ir="-1">← Atrás</button><button class="prim" data-ir="1">Siguiente →</button></div>
+</section>
+
+<!-- 5 CLASIFICACION -->
+<section class="estacion" data-n="5">
+  <div class="etiqueta-est">Estación 5 · 3.4 Clasificación</div>
+  <h2>Completa el organizador gráfico</h2>
+  <div class="grid g2">
+    <div class="caja"><b>Por su forma</b><br><b>Fibrosas:</b> largas como cuerdas, insolubles, dan soporte.<br><b>Globulares:</b> compactas como esferas, solubles, hacen trabajo químico o transportan.</div>
+    <div class="caja"><b>Por su composición</b><br><b>Simples:</b> solo aminoácidos.<br><b>Conjugadas:</b> aminoácidos + otra parte (un grupo hemo, un lípido, un azúcar…).</div>
+  </div>
+  <h3>Reto A: ¿fibrosa o globular?</h3>
+  <div id="retoForma"></div>
+  <button class="prim" id="chkForma">Revisar</button>
+  <p class="fb" id="fbForma"></p>
+  <h3>Reto B: ¿simple o conjugada?</h3>
+  <div id="retoComp"></div>
+  <button class="prim" id="chkComp">Revisar</button>
+  <p class="fb" id="fbComp"></p>
+  <div class="nav"><button data-ir="-1">← Atrás</button><button class="prim" data-ir="1">Siguiente →</button></div>
+</section>
+
+<!-- 6 FUNCION -->
+<section class="estacion" data-n="6">
+  <div class="etiqueta-est">Estación 6 · 3.4 Función biológica · 3.4.2 Proteínas principales</div>
+  <h2>Las siete «profesiones» de las proteínas</h2>
+  <p>Toca cada tarjeta para descubrir una función.</p>
+  <div class="grid g3" id="tarjetas"></div>
+  <h3>Reto: relaciona cada proteína con su función</h3>
+  <div id="retoFun"></div>
+  <button class="prim" id="chkFun">Revisar</button>
+  <p class="fb" id="fbFun"></p>
+  <div class="nav"><button data-ir="-1">← Atrás</button><button class="prim" data-ir="1">Siguiente →</button></div>
+</section>
+
+<!-- 7 METABOLISMO Y ALIMENTOS -->
+<section class="estacion" data-n="7">
+  <div class="etiqueta-est">Estación 7 · 3.4 Metabolismo · 3.4.2 Alimentos</div>
+  <h2>El viaje de la proteína del huevo</h2>
+  <p>Ordena las etapas, desde el sartén hasta el destino de cada aminoácido. Usa ▲ ▼ para mover.</p>
+  <ul class="orden-lista" id="ordenMet"></ul>
+  <button class="prim" id="chkMet">Revisar orden</button>
+  <p class="fb" id="fbMet"></p>
+  <div class="caja alerta"><b>¿Y la proteína que sobra?</b> El cuerpo <b>no tiene almacén</b> de proteína. En el hígado se le quita el grupo amino: el nitrógeno se convierte en <b>urea</b>, que los riñones eliminan en la orina, y el resto se usa como energía o se guarda como grasa.</div>
+  <h3>Reto: ¿completa o se complementa?</h3>
+  <p class="peq">Las proteínas animales traen los 9 aminoácidos esenciales; las leguminosas tienen poca metionina y los cereales poca lisina, así que juntos se complementan.</p>
+  <div id="retoAli"></div>
+  <button class="prim" id="chkAli">Revisar</button>
+  <p class="fb" id="fbAli"></p>
+  <div class="nav"><button data-ir="-1">← Atrás</button><button class="prim" data-ir="1">Siguiente →</button></div>
+</section>
+
+<!-- 8 QUIZ Y CIERRE -->
+<section class="estacion" data-n="8">
+  <div class="etiqueta-est">Estación 8 · Quiz y cierre</div>
+  <h2>Quiz final</h2>
+  <div id="quiz"></div>
+  <button class="prim" id="chkQuiz">Calificar quiz</button>
+  <p class="fb" id="fbQuiz"></p>
+  <h3>Tu respuesta para Mateo</h3>
+  <label for="reflexion">En 3 a 5 líneas: ¿quién tiene razón, Mateo o su abuela? Explícale qué pasa con la proteína extra y cómo se construye el músculo.</label>
+  <textarea id="reflexion" rows="5" placeholder="Mateo, ..."></textarea>
+  <p class="peq" id="cuentaRef">0 palabras (mínimo sugerido: 30)</p>
+  <div class="nav"><button data-ir="-1">← Atrás</button><button class="prim" id="btnGenerar">Generar comprobante</button></div>
+  <div id="zonaComp" hidden>
+    <h3>Comprobante</h3>
+    <canvas id="lienzo" width="1000" height="1500" aria-label="Vista previa del comprobante"></canvas>
+    <div class="nav">
+      <button class="prim" id="btnPng">⬇ Descargar PNG</button>
+      <button class="prim" id="btnPdf">⬇ Descargar PDF</button>
+    </div>
+    <p class="peq">Sube el PNG o el PDF a Blackboard. Si la descarga no funciona en tu celular, mantén presionada la imagen y elige «Guardar imagen».</p>
+  </div>
+</section>
+
+</main>
+<footer>
+  Interactivo de apoyo · Temas Selectos de Química · Unidad III · 3.4 Proteínas. El caso de Mateo es ficticio, con fines educativos; no sustituye una consulta médica o nutricional.
+  Fuentes: Daub y Seese (2005), <i>Química</i> (8.ª ed.), Pearson; Clark et al. (2018), <i>Biology 2e</i>, OpenStax, 3.4; Betts et al. (2022), <i>Anatomy and Physiology 2e</i>, OpenStax, 24.4; WHO/FAO/UNU (2007), <i>Protein and amino acid requirements in human nutrition</i>.
+</footer>
+
+<script>
+(function(){
+"use strict";
+var TOTAL=8, KEY="proteinas_s14_v1";
+var estado={est:0,nombre:"",grupo:"",res:{},reflexion:"",explica:""};
+function guardar(){try{localStorage.setItem(KEY,JSON.stringify(estado));}catch(e){}}
+try{var g=JSON.parse(localStorage.getItem(KEY)||"null");if(g&&typeof g==="object"){estado=Object.assign(estado,g);}}catch(e){}
+try{var t=localStorage.getItem("tsq_tema");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}
+document.getElementById("btnTema").onclick=function(){
+  var cur=document.documentElement.getAttribute("data-theme");
+  var osc=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;
+  var nuevo=cur?(cur==="dark"?"light":"dark"):(osc?"light":"dark");
+  document.documentElement.setAttribute("data-theme",nuevo);try{localStorage.setItem("tsq_tema",nuevo);}catch(e){}
+};
+var secciones=[].slice.call(document.querySelectorAll(".estacion"));
+function $(id){return document.getElementById(id);}
+function mostrar(n){
+  n=Math.max(0,Math.min(TOTAL,n));
+  if(n>0&&!estado.nombre){n=0;}
+  estado.est=n;guardar();
+  secciones.forEach(function(s){s.classList.toggle("activa",+s.dataset.n===n);});
+  var pct=Math.round(100*n/TOTAL);
+  $("relleno").style.width=pct+"%";$("txtPct").textContent=pct+" %";
+  $("txtEst").textContent=n===0?"Inicio":"Estación "+n+" de "+TOTAL;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-ir]").forEach(function(b){b.addEventListener("click",function(){mostrar(estado.est+(+b.dataset.ir));});});
+function fb(id,ok,txt){var e=$(id);e.className="fb "+(ok?"ok":"mal");e.textContent=txt;}
+function registrar(clave,ac,tot){estado.res[clave]={ac:ac,tot:tot};guardar();}
+
+/* ---------- 0 registro ---------- */
+$("nombre").value=estado.nombre;$("grupo").value=estado.grupo;
+$("btnIniciar").onclick=function(){
+  var n=$("nombre").value.trim(),g=$("grupo").value.trim();
+  if(n.split(/\s+/).length<2){$("fbReg").textContent="Escribe tu nombre y al menos un apellido.";return;}
+  if(!g){$("fbReg").textContent="Escribe tu grupo.";return;}
+  $("fbReg").textContent="";estado.nombre=n;estado.grupo=g;guardar();mostrar(1);
+};
+
+/* ---------- utilidades ---------- */
+function retoChips(contId,items,opciones){
+  var c=$(contId);c.innerHTML="";
+  items.forEach(function(it,i){
+    var f=document.createElement("div");f.className="fila";f.dataset.i=i;
+    f.innerHTML="<div>"+it.t+"</div>";
+    var o=document.createElement("div");o.className="opciones";
+    (it.ops||opciones).forEach(function(op){
+      var b=document.createElement("button");b.className="chip";b.textContent=op;b.type="button";
+      b.onclick=function(){[].forEach.call(o.children,function(x){x.classList.remove("sel","ok","mal");});b.classList.add("sel");f.dataset.sel=op;f.classList.remove("ok","mal");};
+      o.appendChild(b);
+    });
+    f.appendChild(o);var e=document.createElement("div");e.className="fb";f.appendChild(e);c.appendChild(f);
+  });
+}
+function revisarChips(contId,items,fbId,clave){
+  var filas=[].slice.call($(contId).children),ac=0,vacias=0;
+  filas.forEach(function(f,i){
+    var sel=f.dataset.sel,ok=sel===items[i].r;
+    if(!sel){vacias++;return;}
+    if(ok)ac++;
+    f.classList.toggle("ok",ok);f.classList.toggle("mal",!ok);
+    [].forEach.call(f.querySelectorAll(".chip"),function(b){if(b.textContent===sel){b.classList.remove("sel");b.classList.add(ok?"ok":"mal");}});
+    var e=f.querySelector(".fb");e.className="fb "+(ok?"ok":"mal");e.textContent=ok?"✔ "+(items[i].x||"Correcto."):"✘ Inténtalo de nuevo. Pista: "+(items[i].p||"revisa la explicación de arriba.");
+  });
+  if(vacias){fb(fbId,false,"Te faltan "+vacias+" por responder.");return;}
+  registrar(clave,ac,items.length);
+  fb(fbId,ac===items.length,ac===items.length?"¡Excelente! "+ac+" de "+items.length+". Puedes avanzar.":ac+" de "+items.length+" correctas. Corrige las marcadas en rojo y vuelve a revisar.");
+}
+function listaOrden(ulId,etapas,inicial){
+  var orden=inicial.slice();
+  function pintar(){
+    var ul=$(ulId);ul.innerHTML="";
+    orden.forEach(function(k,pos){
+      var li=document.createElement("li");
+      li.innerHTML='<span class="num">'+(pos+1)+'</span><span class="t">'+etapas[k]+'</span>';
+      var up=document.createElement("button");up.textContent="▲";up.type="button";up.setAttribute("aria-label","Subir");up.disabled=pos===0;
+      var dn=document.createElement("button");dn.textContent="▼";dn.type="button";dn.setAttribute("aria-label","Bajar");dn.disabled=pos===orden.length-1;
+      up.onclick=function(){var t=orden[pos-1];orden[pos-1]=orden[pos];orden[pos]=t;pintar();};
+      dn.onclick=function(){var t=orden[pos+1];orden[pos+1]=orden[pos];orden[pos]=t;pintar();};
+      li.appendChild(up);li.appendChild(dn);ul.appendChild(li);
+    });
+  }
+  pintar();
+  return function revisar(){
+    var ac=orden.filter(function(k,i){return k===i;}).length;
+    [].forEach.call($(ulId).children,function(li,i){li.style.borderColor=orden[i]===i?"var(--verde)":"var(--rojo)";});
+    return ac;
+  };
+}
+
+/* ---------- dibujo de moléculas (SVG) ---------- */
+function T(x,y,s,cls){return '<text x="'+x+'" y="'+y+'"'+(cls?' class="'+cls+'"':'')+'>'+s+'</text>';}
+function L(x1,y1,x2,y2,cls){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"'+(cls?' class="'+cls+'"':'')+'/>';}
+/* aminoácido con origen ox; o = {R, sinH, sinOH, rojoH, rojoOH} */
+function aa(ox,o){
+  var s="",y=110;
+  s+=L(ox+48,y,ox+92,y)+L(ox+108,y,ox+152,y)+L(ox+40,y-14,ox+40,y-44)+L(ox+100,y-14,ox+100,y-44)+L(ox+100,y+14,ox+100,y+42);
+  s+=L(ox+156,y-14,ox+156,y-44)+L(ox+164,y-14,ox+164,y-44);
+  if(!o.sinH)s+=L(ox+8,y,ox+32,y);
+  if(!o.sinOH)s+=L(ox+168,y,ox+190,y);
+  s+=T(ox+40,y,"N")+T(ox+100,y,"C")+T(ox+160,y,"C")+T(ox+160,y-58,"O")+T(ox+40,y-58,"H")+T(ox+100,y-58,"H");
+  s+=T(ox+100,y+58,o.R,o.R.length>2?"peq":"");
+  if(!o.sinH)s+=T(ox,y,"H",o.rojoH?"rojo":"");
+  if(!o.sinOH)s+=T(ox+208,y,"OH",o.rojoOH?"rojo":"");
+  return s;
+}
+function svg(w,h,body){return '<svg class="mol" viewBox="0 0 '+w+' '+h+'" role="img">'+body+'</svg>';}
+var RVAL="CH(CH₃)₂";
+function badge(x,y,n){return '<g class="badge"><circle cx="'+x+'" cy="'+y+'" r="13"/><text x="'+x+'" y="'+y+'">'+n+'</text></g>';}
+$("svgAA").innerHTML=svg(330,220,aa(50,{R:"R"})+badge(20,60,"1")+badge(124,80,"2")+badge(292,60,"3")+badge(118,168,"4")+
+  '<rect x="34" y="40" width="64" height="88" rx="8" fill="none" stroke="var(--azul-medio)" stroke-width="2" stroke-dasharray="5 4"/>'+
+  '<rect x="196" y="40" width="88" height="88" rx="8" fill="none" stroke="var(--rojo)" stroke-width="2" stroke-dasharray="5 4"/>');
+$("svgGly").innerHTML=svg(280,200,aa(30,{R:"H"}));
+$("svgVal").innerHTML=svg(280,200,aa(30,{R:RVAL}));
+
+var itAA=[
+  {t:"Parte ① (recuadro azul: N con dos H)",r:"Grupo amino",x:"–NH₂: se comporta como base.",p:"tiene nitrógeno."},
+  {t:"Parte ② (el carbono del centro)",r:"Carbono α",x:"El carbono al que se unen todos los grupos.",p:"es el átomo central."},
+  {t:"Parte ③ (recuadro rojo: C, O y OH)",r:"Grupo carboxilo",x:"–COOH: se comporta como ácido.",p:"recuerda los ácidos del Bloque I: –COOH."},
+  {t:"Parte ④ (lo que cuelga abajo)",r:"Cadena lateral R",x:"Es lo único que cambia de un aminoácido a otro.",p:"es la parte variable."}
+];
+retoChips("retoAA",itAA,["Grupo amino","Carbono α","Grupo carboxilo","Cadena lateral R"]);
+$("chkAA").onclick=function(){revisarChips("retoAA",itAA,"fbAA","Anatomía del aminoácido");};
+var itGV=[
+  {t:"¿Cuál tiene como cadena R un solo átomo de H?",r:"Glicina",x:"Es el aminoácido más pequeño.",p:"mira lo que cuelga del carbono α."},
+  {t:"¿Cuál tiene una cadena R ramificada y apolar, CH(CH₃)₂?",r:"Valina",x:"Solo C e H: apolar.",p:"busca la cadena con CH₃."},
+  {t:"¿Cuál es un aminoácido esencial (hay que comerlo)?",r:"Valina",x:"Está entre los 9 esenciales.",p:"la glicina sí la fabrica el cuerpo."},
+  {t:"¿En qué parte se diferencian las dos moléculas?",r:"Solo en R",x:"La base (amino, Cα, H, carboxilo) es idéntica.",p:"compara pieza por pieza.",ops:["En el grupo amino","En el carboxilo","Solo en R"]}
+];
+retoChips("retoGV",itGV,["Glicina","Valina"]);
+$("chkGV").onclick=function(){revisarChips("retoGV",itGV,"fbGV","Glicina vs. valina");};
+
+/* ---------- 2 enlace peptídico ---------- */
+var pasosPep=[
+  function(){return svg(560,220,aa(20,{R:"H"})+T(268,110,"+","azul")+aa(330,{R:RVAL})+T(120,198,"Glicina","lbl")+T(430,198,"Valina","lbl"));},
+  function(){return svg(560,220,aa(20,{R:"H",rojoOH:true})+aa(330,{R:RVAL,rojoH:true})+'<rect x="206" y="88" width="140" height="44" rx="8" fill="none" stroke="var(--rojo)" stroke-width="2.5" stroke-dasharray="6 4"/>'+T(120,198,"Glicina","lbl")+T(430,198,"Valina","lbl"));},
+  function(){return svg(560,220,aa(20,{R:"H",sinOH:true})+aa(330,{R:RVAL,sinH:true})+'<line x1="188" y1="110" x2="362" y2="110" stroke="var(--suave)" stroke-width="2.4" stroke-dasharray="4 6"/>'+'<g class="agua">'+T(275,175,"OH + H → H₂O","rojo")+'</g>');},
+  function(){return svg(560,220,aa(30,{R:"H",sinOH:true})+aa(200,{R:RVAL,sinH:true})+'<line x1="198" y1="110" x2="232" y2="110" class="bondpep"/>'+T(215,22,"enlace peptídico","azul peq")+'<rect x="176" y="40" width="80" height="94" rx="8" fill="none" stroke="var(--azul-medio)" stroke-width="2.5"/>'+T(230,198,"Dipéptido Gly–Val","lbl")+T(500,175,"+ H₂O","rojo"));}
+];
+var txtPep=["Paso 1: tenemos dos piezas, glicina y valina. Cada una tiene un extremo amino (izquierda) y uno carboxilo (derecha).",
+ "Paso 2: el carboxilo de la glicina queda frente al amino de la valina. En rojo, los átomos que van a salir: el OH y un H.",
+ "Paso 3: el OH y el H se unen y forman una molécula de agua, que sale: es una condensación.",
+ "Paso 4: el C del carboxilo queda unido al N del amino. Ese enlace C–N es el enlace peptídico. El dipéptido aún tiene un extremo amino y uno carboxilo libres: la cadena puede seguir creciendo."];
+var pp=0;
+function pintarPep(){$("svgPep").innerHTML=pasosPep[pp]();$("txtPep").textContent=txtPep[pp];$("btnPep").textContent=pp===3?"↺ Repetir":"Siguiente paso ▶";}
+pintarPep();
+$("btnPep").onclick=function(){pp=(pp+1)%4;pintarPep();};
+$("chkPep").onclick=function(){
+  var r={p1:"b",p2:"a",p3:"b",p4:"a",p5:"c"},ac=0,vac=0;
+  Object.keys(r).forEach(function(k){var v=$(k).value;if(!v)vac++;else if(v===r[k])ac++;$(k).style.borderColor=!v?"":(v===r[k]?"var(--verde)":"var(--rojo)");});
+  if(vac){fb("fbPep",false,"Elige una opción en cada espacio.");return;}
+  registrar("Enlace peptídico",ac,5);
+  fb("fbPep",ac===5,ac===5?"¡Exacto! Carboxilo + amino, sale agua y queda el enlace peptídico C–N.":ac+" de 5. Revisa los espacios en rojo; puedes repetir la animación.");
+};
+$("explica").value=estado.explica||"";
+function contarExp(){var n=$("explica").value.trim().split(/\s+/).filter(Boolean).length;$("cuentaExp").textContent=n+" palabras (mínimo sugerido: 20)";estado.explica=$("explica").value;guardar();return n;}
+$("explica").addEventListener("input",contarExp);contarExp();
+
+/* ---------- 3 niveles ---------- */
+var niveles=["Primaria: el orden de los aminoácidos en la cadena","Secundaria: la cadena se enrolla en hélice o se pliega en lámina","Terciaria: toda la cadena se dobla en una forma 3D","Cuaternaria: se unen varias cadenas (como la hemoglobina, con 4)"];
+var revNiv=listaOrden("ordenNiv",niveles,[2,0,3,1]);
+$("chkNiv").onclick=function(){var ac=revNiv();registrar("Niveles de estructura",ac,4);
+  fb("fbNiv",ac===4,ac===4?"¡Correcto! Primaria → secundaria → terciaria → cuaternaria.":ac+" de 4 en su lugar (verde). Pista: todo empieza con el orden de las cuentas del collar.");};
+
+/* ---------- 4 desnaturalización ---------- */
+$("btnHuevo").onclick=function(){var h=$("huevo");
+  if(h.classList.contains("cocido")){h.classList.remove("cocido");$("btnHuevo").textContent="🔥 Calentar";$("txtHuevo").innerHTML="La clara es casi toda <b>albúmina</b>, una proteína globular. Pulsa «Calentar».";return;}
+  h.classList.add("cocido");$("btnHuevo").textContent="↺ Huevo nuevo";
+  $("txtHuevo").innerHTML="Con el calor, las cadenas de albúmina <b>pierden su forma 3D</b> (se desnaturalizan), se enredan entre sí y atrapan agua: la clara se vuelve <b>blanca y firme</b>. Al enfriarse no regresa: es <b>irreversible</b>. Los enlaces peptídicos <b>no</b> se rompen, así que los aminoácidos siguen ahí.";};
+var itDes=[
+  {t:"🍳 El calor del sartén",r:"Sí",x:"El calor rompe las interacciones que dan forma a la proteína.",p:"es lo que le pasó al huevo de Mateo."},
+  {t:"🍋 El jugo de limón sobre el pescado del ceviche",r:"Sí",x:"El ácido desnaturaliza la proteína: el pescado se pone blanco sin fuego.",p:"¿por qué el pescado del ceviche se ve «cocido»?"},
+  {t:"🥚 Batir las claras a punto de turrón",r:"Sí",x:"La agitación fuerte también desdobla las proteínas.",p:"la clara cambia de aspecto al batirla."},
+  {t:"🧴 Alcohol en una herida",r:"Sí",x:"El alcohol desnaturaliza las proteínas de los microbios.",p:"por eso funciona como desinfectante."},
+  {t:"🥛 Dejar un vaso de leche 5 minutos sobre la mesa",r:"No",x:"Sin calor, ácido ni agitación, la proteína conserva su forma.",p:"¿cambió algo de temperatura, acidez o movimiento?"},
+  {t:"Al desnaturalizarse una proteína, ¿se rompen sus enlaces peptídicos?",r:"No",x:"Solo se pierde la forma; la secuencia (estructura primaria) queda igual.",p:"piensa en el collar: ¿se cortan los hilos o solo se desacomoda?"}
+];
+retoChips("retoDes",itDes,["Sí","No"]);
+$("chkDes").onclick=function(){revisarChips("retoDes",itDes,"fbDes","Desnaturalización");};
+
+/* ---------- 5 clasificación ---------- */
+var itForma=[
+  {t:"🧴 Colágeno (piel, tendones, huesos)",r:"Fibrosa",x:"Triple hélice larga y resistente.",p:"da soporte: es como una cuerda."},
+  {t:"💅 Queratina (cabello, uñas)",r:"Fibrosa",x:"Larga, resistente e insoluble.",p:"¿se disuelve tu cabello en agua?"},
+  {t:"🩸 Hemoglobina (glóbulos rojos)",r:"Globular",x:"Compacta y soluble: transporta oxígeno.",p:"viaja disuelta en la sangre."},
+  {t:"💉 Insulina (hormona)",r:"Globular",x:"Pequeña y soluble: viaja por la sangre.",p:"es un mensajero que viaja en la sangre."},
+  {t:"🛡️ Anticuerpos",r:"Globular",x:"Compactos y solubles, reconocen microbios.",p:"circulan en la sangre."},
+  {t:"🥛 Lactasa (enzima del intestino)",r:"Globular",x:"Las enzimas son globulares.",p:"hace trabajo químico."}
+];
+retoChips("retoForma",itForma,["Fibrosa","Globular"]);
+$("chkForma").onclick=function(){revisarChips("retoForma",itForma,"fbForma","Fibrosas y globulares");};
+var itComp=[
+  {t:"Albúmina de la clara: solo aminoácidos",r:"Simple",x:"Solo cadena de aminoácidos.",p:"lee la descripción."},
+  {t:"Hemoglobina: cadenas de aminoácidos + grupo hemo (con hierro)",r:"Conjugada",x:"El grupo hemo es la parte no proteica.",p:"¿tiene «otra parte» además de aminoácidos?"},
+  {t:"Lipoproteínas HDL y LDL: proteína + lípidos",r:"Conjugada",x:"Proteína unida a lípidos.",p:"los camiones de 3.3 llevan grasa."},
+  {t:"Glucoproteínas de la membrana: proteína + cadenas de azúcar",r:"Conjugada",x:"Proteína unida a carbohidratos.",p:"¿solo aminoácidos?"}
+];
+retoChips("retoComp",itComp,["Simple","Conjugada"]);
+$("chkComp").onclick=function(){revisarChips("retoComp",itComp,"fbComp","Simples y conjugadas");};
+
+/* ---------- 6 función ---------- */
+var funciones=[
+  ["🧱","Estructural","Colágeno y queratina: soporte de piel, huesos, cabello y uñas."],
+  ["⚗️","Enzimática","Lactasa, lipasa, pepsina: aceleran reacciones químicas."],
+  ["🚚","Transporte","Hemoglobina lleva O₂; las lipoproteínas llevan grasas."],
+  ["🛡️","Defensa","Los anticuerpos reconocen virus y bacterias."],
+  ["📨","Hormonal","La insulina regula la glucosa en la sangre."],
+  ["💪","Contráctil","Actina y miosina hacen que el músculo se contraiga."],
+  ["🥛","Reserva","Caseína (leche) y ovoalbúmina (clara) guardan aminoácidos para la cría."]
+];
+var tj=$("tarjetas");
+funciones.forEach(function(f){
+  var d=document.createElement("button");d.type="button";d.className="flip";d.style.border="0";d.style.padding="0";d.style.background="transparent";
+  d.setAttribute("aria-label","Función "+f[1]+": "+f[2]);
+  d.innerHTML='<div class="in"><div class="cara frente"><span class="ico">'+f[0]+'</span>'+f[1]+'</div><div class="cara reverso">'+f[2]+'</div></div>';
+  d.onclick=function(){d.classList.toggle("on");};tj.appendChild(d);
+});
+var FUN=["Estructural","Enzimática","Transporte","Defensa","Hormonal","Contráctil","Reserva"];
+var itFun=[
+  {t:"Colágeno",r:"Estructural",p:"está en tendones y huesos."},
+  {t:"Lactasa",r:"Enzimática",x:"Hidroliza la lactosa (3.1).",p:"rompe la lactosa de la leche."},
+  {t:"Hemoglobina",r:"Transporte",x:"Lleva oxígeno.",p:"¿qué lleva la sangre a todo el cuerpo?"},
+  {t:"Anticuerpos",r:"Defensa",p:"sistema inmunológico."},
+  {t:"Insulina",r:"Hormonal",x:"Mensajero del páncreas.",p:"la falla en la diabetes."},
+  {t:"Miosina",r:"Contráctil",x:"Jala a la actina y el músculo se contrae.",p:"la que necesita Mateo en el gimnasio."},
+  {t:"Caseína",r:"Reserva",x:"Proteína de la leche.",p:"alimento para la cría."},
+  {t:"Lipoproteína LDL",r:"Transporte",x:"El camión repartidor de colesterol (3.3).",p:"recuerda los camiones de 3.3."}
+];
+retoChips("retoFun",itFun,FUN);
+$("chkFun").onclick=function(){revisarChips("retoFun",itFun,"fbFun","Función biológica");};
+
+/* ---------- 7 metabolismo y alimentos ---------- */
+var etapasMet=["Sartén: el calor desnaturaliza la albúmina","Estómago: el HCl desnaturaliza y la pepsina empieza a cortar la cadena","Intestino: la tripsina y otras enzimas dejan aminoácidos sueltos (hidrólisis)","Sangre: los aminoácidos se absorben y viajan a las células","Músculo: con ejercicio, la célula arma sus propias proteínas (actina y miosina)","Hígado: los aminoácidos que sobran pierden su N, que sale como urea por el riñón"];
+var revMet=listaOrden("ordenMet",etapasMet,[3,0,5,2,4,1]);
+$("chkMet").onclick=function(){var ac=revMet();registrar("Viaje de la proteína",ac,6);
+  fb("fbMet",ac===6,ac===6?"¡Orden correcto! Desnaturalizar → cortar → absorber → construir → desechar el sobrante.":ac+" de 6 en su lugar (verde). Pista: la digestión empieza en el estómago y termina en el intestino.");};
+var itAli=[
+  {t:"🥚 Huevo",r:"Completa",x:"Proteína animal: trae los 9 esenciales.",p:"es de origen animal."},
+  {t:"🐟 Pescado",r:"Completa",x:"Proteína animal.",p:"origen animal."},
+  {t:"🫘 Frijoles solos",r:"Le falta un aminoácido",x:"Poca metionina.",p:"las leguminosas tienen poca metionina."},
+  {t:"🌽 Tortilla de maíz sola",r:"Le falta un aminoácido",x:"Poca lisina.",p:"los cereales tienen poca lisina."},
+  {t:"🌮 Frijoles con tortilla a lo largo del día",r:"Completa",x:"Se complementan: lo que le falta a uno lo trae el otro.",p:"¿qué dijo la abuela?"}
+];
+retoChips("retoAli",itAli,["Completa","Le falta un aminoácido"]);
+$("chkAli").onclick=function(){revisarChips("retoAli",itAli,"fbAli","Alimentos con proteína");};
+
+/* ---------- 8 quiz ---------- */
+var preguntas=[
+  {q:"Los monómeros (piezas) de las proteínas son los…",o:["monosacáridos","ácidos grasos","aminoácidos","nucleótidos"],r:2},
+  {q:"¿Qué elemento distingue a las proteínas de los carbohidratos y los lípidos?",o:["Carbono","Nitrógeno","Oxígeno","Hidrógeno"],r:1},
+  {q:"Al formarse un enlace peptídico entre dos aminoácidos…",o:["entra una molécula de agua","sale una molécula de agua","sale CO₂","se rompe la cadena R"],r:1},
+  {q:"Cuando la clara del huevo se pone blanca al freírla, la albúmina…",o:["se convierte en grasa","pierde su forma 3D (se desnaturaliza)","rompe todos sus enlaces peptídicos","se transforma en glucosa"],r:1},
+  {q:"La hemoglobina es una proteína…",o:["fibrosa con función estructural","globular con función de transporte","simple con función de reserva","fibrosa con función contráctil"],r:1},
+  {q:"Si Mateo come más proteína de la que su cuerpo necesita, la que sobra…",o:["se guarda como músculo","se almacena en el hígado como proteína","pierde su nitrógeno (que sale como urea) y el resto se usa como energía o grasa","se elimina intacta en la orina"],r:2},
+  {q:"¿Cuál combinación aporta los 9 aminoácidos esenciales sin alimentos de origen animal?",o:["Arroz con tortilla","Frijoles con tortilla","Frijoles con lentejas","Pan con tortilla"],r:1}
+];
+var cq=$("quiz");
+preguntas.forEach(function(p,i){
+  var f=document.createElement("div");f.className="fila";
+  f.innerHTML="<div><b>"+(i+1)+".</b> "+p.q+"</div>";
+  var o=document.createElement("div");o.className="opciones";
+  p.o.forEach(function(t,j){var b=document.createElement("button");b.type="button";b.className="chip";b.textContent=t;b.onclick=function(){[].forEach.call(o.children,function(x){x.classList.remove("sel","ok","mal");});b.classList.add("sel");f.dataset.sel=j;f.classList.remove("ok","mal");};o.appendChild(b);});
+  f.appendChild(o);var e=document.createElement("div");e.className="fb";f.appendChild(e);cq.appendChild(f);
+});
+$("chkQuiz").onclick=function(){
+  var filas=[].slice.call(cq.children),ac=0,vac=0;
+  filas.forEach(function(f,i){
+    if(f.dataset.sel===undefined){vac++;return;}
+    var s=+f.dataset.sel,ok=s===preguntas[i].r;if(ok)ac++;
+    f.classList.toggle("ok",ok);f.classList.toggle("mal",!ok);
+    var bs=f.querySelectorAll(".chip");bs[s].classList.remove("sel");bs[s].classList.add(ok?"ok":"mal");
+    var e=f.querySelector(".fb");e.className="fb "+(ok?"ok":"mal");e.textContent=ok?"✔ Correcto.":"✘ Revisa la estación correspondiente e inténtalo de nuevo.";
+  });
+  if(vac){fb("fbQuiz",false,"Te faltan "+vac+" preguntas.");return;}
+  registrar("Quiz final",ac,preguntas.length);
+  fb("fbQuiz",ac===preguntas.length,"Quiz: "+ac+" de "+preguntas.length+(ac===preguntas.length?". ¡Listo para el cierre!":". Puedes corregir y volver a calificar."));
+};
+
+/* ---------- comprobante ---------- */
+$("reflexion").value=estado.reflexion||"";
+function contar(){var n=$("reflexion").value.trim().split(/\s+/).filter(Boolean).length;$("cuentaRef").textContent=n+" palabras (mínimo sugerido: 30)";estado.reflexion=$("reflexion").value;guardar();return n;}
+$("reflexion").addEventListener("input",contar);contar();
+var ORDEN=["Anatomía del aminoácido","Glicina vs. valina","Enlace peptídico","Niveles de estructura","Desnaturalización","Fibrosas y globulares","Simples y conjugadas","Función biológica","Viaje de la proteína","Alimentos con proteína","Quiz final"];
+function envolver(ctx,texto,x,y,ancho,alto,maxL){
+  var pal=texto.split(/\s+/),linea="",yy=y,n=0;
+  for(var i=0;i<pal.length;i++){var prueba=linea?linea+" "+pal[i]:pal[i];if(ctx.measureText(prueba).width>ancho&&linea){ctx.fillText(linea,x,yy);n++;linea=pal[i];yy+=alto;if(maxL&&n>=maxL){linea="…";break;}}else linea=prueba;}
+  if(linea)ctx.fillText(linea,x,yy);return yy+alto;
+}
+function dibujar(){
+  var c=$("lienzo"),ctx=c.getContext("2d"),W=c.width,H=c.height;
+  ctx.fillStyle="#ffffff";ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="#0d3b66";ctx.fillRect(0,0,W,120);
+  ctx.fillStyle="#1b6fb2";ctx.fillRect(0,120,W,14);ctx.fillStyle="#78b4dc";ctx.fillRect(0,134,W,6);
+  ctx.fillStyle="#ffffff";ctx.font="bold 24px Arial";ctx.fillText("Temas Selectos de Química · Unidad III · 3.4 Proteínas",40,48);
+  ctx.font="bold 36px Arial";ctx.fillText("Comprobante: Proteínas, las piezas que trabajan",40,96);
+  ctx.fillStyle="#282828";ctx.font="22px Arial";
+  ctx.fillText("Nombre: "+estado.nombre,40,186);ctx.fillText("Grupo: "+estado.grupo,40,218);
+  var d=new Date();ctx.fillText("Generado: "+d.toLocaleDateString("es-MX")+" "+d.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}),40,250);
+  ctx.fillStyle="#0d3b66";ctx.font="bold 26px Arial";ctx.fillText("Resultados por actividad (último intento)",40,300);
+  var y=320,tAc=0,tTot=0,RH=40;
+  ORDEN.forEach(function(k,i){
+    var r=estado.res[k];ctx.fillStyle=i%2?"#ffffff":"#ebf4fa";ctx.fillRect(40,y,W-80,RH);
+    ctx.fillStyle="#282828";ctx.font="21px Arial";ctx.fillText(k,56,y+27);
+    var txt=r?r.ac+" / "+r.tot:"sin completar";ctx.font="bold 21px Arial";ctx.fillStyle=r?(r.ac===r.tot?"#2e7d32":"#1b6fb2"):"#c62828";
+    ctx.fillText(txt,W-230,y+27);if(r){tAc+=r.ac;tTot+=r.tot;}y+=RH;
+  });
+  ctx.strokeStyle="#78b4dc";ctx.lineWidth=2;ctx.strokeRect(40,320,W-80,RH*ORDEN.length);
+  y+=36;ctx.fillStyle="#0d3b66";ctx.font="bold 23px Arial";
+  var comp=ORDEN.filter(function(k){return estado.res[k];}).length;
+  ctx.fillText("Total de aciertos: "+tAc+" de "+tTot+"   ·   Actividades completadas: "+comp+" de "+ORDEN.length,40,y);
+  y+=46;ctx.fillText("El enlace peptídico, con mis palabras:",40,y);y+=32;
+  ctx.fillStyle="#282828";ctx.font="20px Arial";
+  y=envolver(ctx,(estado.explica||"(sin respuesta)").replace(/\s+/g," "),40,y,W-80,28,6);
+  y+=16;ctx.fillStyle="#0d3b66";ctx.font="bold 23px Arial";ctx.fillText("Mi respuesta para Mateo:",40,y);y+=32;
+  ctx.fillStyle="#282828";ctx.font="20px Arial";
+  y=envolver(ctx,(estado.reflexion||"(sin respuesta)").replace(/\s+/g," "),40,y,W-80,28,9);
+  ctx.fillStyle="#5a6b7a";ctx.font="16px Arial";
+  ctx.fillText("Interactivo de apoyo · Caso ficticio con fines educativos.",40,H-30);
+}
+$("btnGenerar").onclick=function(){
+  var n=contar();
+  if(n<10){alertaSuave("Escribe tu respuesta para Mateo (al menos unas líneas) antes de generar el comprobante.");return;}
+  dibujar();$("zonaComp").hidden=false;$("zonaComp").scrollIntoView({behavior:"smooth"});
+};
+function alertaSuave(t){var p=$("cuentaRef");p.textContent=t;p.style.color="var(--rojo)";setTimeout(function(){p.style.color="";},2500);}
+function nombreArchivo(ext){return ("Proteinas_S14_"+estado.nombre+"_"+estado.grupo).replace(/[^\wÁÉÍÓÚÑáéíóúñ]+/g,"_")+"."+ext;}
+$("btnPng").onclick=function(){
+  var a=document.createElement("a");a.download=nombreArchivo("png");a.href=$("lienzo").toDataURL("image/png");document.body.appendChild(a);a.click();a.remove();
+};
+/* PDF propio (sin librerias): una pagina carta con la imagen JPEG del comprobante */
+function pdfDesdeJpeg(dataUrl,iw,ih){
+  var bin=atob(dataUrl.split(",")[1]),img=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)img[i]=bin.charCodeAt(i);
+  var pw=612,ph=792,m=28,w=pw-2*m,h=w*ih/iw;if(h>ph-2*m){h=ph-2*m;w=h*iw/ih;}
+  var x=((pw-w)/2).toFixed(2),y=(ph-m-h).toFixed(2);
+  var cont="q "+w.toFixed(2)+" 0 0 "+h.toFixed(2)+" "+x+" "+y+" cm /Im0 Do Q";
+  var enc=function(t){var a=new Uint8Array(t.length);for(var k=0;k<t.length;k++)a[k]=t.charCodeAt(k)&255;return a;};
+  var partes=[],ofs=[],len=0;
+  function add(u){partes.push(u);len+=u.length;}
+  add(enc("%PDF-1.4\n"));
+  var objs=[
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 "+pw+" "+ph+"] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>",
+    null,
+    "<< /Length "+cont.length+" >>\nstream\n"+cont+"\nendstream"
+  ];
+  for(var n=0;n<objs.length;n++){
+    ofs.push(len);
+    if(n===3){add(enc("4 0 obj\n<< /Type /XObject /Subtype /Image /Width "+iw+" /Height "+ih+" /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length "+img.length+" >>\nstream\n"));add(img);add(enc("\nendstream\nendobj\n"));}
+    else add(enc((n+1)+" 0 obj\n"+objs[n]+"\nendobj\n"));
+  }
+  var xref=len,t="xref\n0 6\n0000000000 65535 f \n";
+  ofs.forEach(function(o){t+=("0000000000"+o).slice(-10)+" 00000 n \n";});
+  t+="trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n"+xref+"\n%%EOF";add(enc(t));
+  return new Blob(partes,{type:"application/pdf"});
+}
+$("btnPdf").onclick=function(){
+  var c=$("lienzo"),blob=pdfDesdeJpeg(c.toDataURL("image/jpeg",0.92),c.width,c.height);
+  var url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=nombreArchivo("pdf");
+  document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},4000);
+};
+
+mostrar(estado.nombre?estado.est:0);
+})();
+</script>
+</body>
+</html>
